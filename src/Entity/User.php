@@ -21,7 +21,7 @@ class User
      *
      * @throws EntityNotFoundException
      */
-    public static function findByCredentials(string $login, string $password) : User
+    public static function findByCredentials(string $login, string $password): User
     {
         $stmt = MyPDO::getInstance()->prepare(
             <<<'SQL'
