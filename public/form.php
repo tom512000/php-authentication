@@ -20,7 +20,7 @@ CSS
 );
 
 $authentication->logoutIfRequested();
-if ($authentication->isUserConnected()) {
+if (isset($authentication->getUser())) {
     $form = $authentication->logoutForm("form.php", "Déconnexion");
     $p->appendContent(
         <<<HTML

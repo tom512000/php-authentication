@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Authentication;
 
 use Authentication\Exception\AuthenticationException;
+use Authentication\Exception\NotLoggedInException;
 use Entity\Exception\EntityNotFoundException;
 use Entity\User;
 use Html\Helper\Dumper;
@@ -19,6 +20,14 @@ class UserAuthentication
     private const SESSION_USER_KEY = 'user';
     private const LOGOUT_INPUT_NAME = 'logout';
     private ?User $user = null;
+
+    /**
+     * @throws NotLoggedInException
+     */
+    public function __construct()
+    {
+        $this->user = $this->getUserFromSession();
+    }
 
     public function loginForm(string $action, string $submitText = 'OK'): string
     {
@@ -95,6 +104,28 @@ class UserAuthentication
         if (isset($_POST[UserAuthentication::LOGOUT_INPUT_NAME])) {
             unset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]);
             unset($this->user);
+        }
+    }
+
+    /**
+     * @throws NotLoggedInException
+     */
+    public function getUserFromSession(): User
+    {
+        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]) &&
+            ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
+            return $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY];
+        } else {
+            throw new NotLoggedInException("Aucun utilisateur dans la session !");
+        }
+    }
+
+    public function getUser(): User
+    {
+        if (isset($this->user)) {
+            return $this->user;
+        } else {
+            throw new NotLoggedInException("Aucun utilisateur dans la session !");
         }
     }
 }
