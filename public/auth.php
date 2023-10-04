@@ -14,7 +14,8 @@ try {
     // Tentative de connexion
     $user = $authentication->getUserFromAuth();
     // Si connexion réussie, affichage du profil
-    $p->appendContent(<<<HTML
+    $p->appendContent(
+        <<<HTML
 <div>Bonjour {$user->getFirstName()}</div>
 HTML
     );

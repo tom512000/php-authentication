@@ -11,17 +11,31 @@ $authentication = new UserAuthentication();
 $p = new AppWebPage('Authentification');
 
 // Production du formulaire de connexion
-$p->appendCSS(<<<CSS
+$p->appendCSS(
+    <<<CSS
     form input {
-        width : 4em ;
+        width : auto ;
     }
 CSS
 );
-$form = $authentication->loginForm('auth.php');
-$p->appendContent(<<<HTML
-    {$form}
-    <p>Pour faire un test : essai/toto
+
+$authentication->logoutIfRequested();
+if ($authentication->isUserConnected()) {
+    $form = $authentication->logoutForm("form.php", "Déconnexion");
+    $p->appendContent(
+        <<<HTML
+        {$form}
 HTML
-);
+    );
+} else {
+    $form = $authentication->loginForm('auth.php');
+    $p->appendContent(
+        <<<HTML
+        {$form}
+        <p>Pour faire un test : essai/toto</p>
+HTML
+    );
+}
+
 
 echo $p->toHTML();
