@@ -10,13 +10,15 @@ $authentication = new UserAuthentication();
 // Un utilisateur est-il connecté ?
 if (!$authentication->isUserConnected()) {
     // Rediriger vers le formulaire de connexion
+    header("Location: ./form.php");
     exit; // Fin du programme
 }
 
 $title = 'Zone membre connecté';
 $p = new AppWebPage($title);
 
-$p->appendContent(<<<HTML
+$p->appendContent(
+    <<<HTML
         <h1>$title</h1>
         <h2>Page 1</h2>
 HTML

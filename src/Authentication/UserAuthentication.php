@@ -55,7 +55,7 @@ class UserAuthentication
     {
         $this->user = $user;
         Session::start();
-        $_SESSION[UserAuthentication::SESSION_USER_KEY] = $user;
+        $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] = $user;
     }
 
     /**
@@ -65,10 +65,9 @@ class UserAuthentication
     {
         Session::start();
         $res = false;
-        if (Dumper::dump($_SESSION[UserAuthentication::SESSION_USER_KEY] instanceof User)) {
+        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]) &&
+            ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
             $res = true;
-        } else {
-            header('./form.php');
         }
 
         return $res;
