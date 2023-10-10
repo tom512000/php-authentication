@@ -34,12 +34,16 @@ class UserAuthentication
      */
     public function getUserFromSession(): User
     {
-        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY])
-            && ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
-            return $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY];
-        } else {
-            throw new NotLoggedInException('Aucun utilisateur dans la session !');
+        Session::start();
+        if (isset($_SESSION[self::SESSION_KEY][self::SESSION_USER_KEY])) {
+            $utilisateur = $_SESSION[self::SESSION_KEY][self::SESSION_USER_KEY];
+            if ($utilisateur instanceof User){
+                $this->setUser($utilisateur);
+                return $utilisateur;
+            }
         }
+	// Si je suis là, c'est que la récupération de l'utilisateur n'a pas marché
+        throw new NotLoggedInException("Aucun utilisateur dans la session !");
     }
 
     public function loginForm(string $action, string $submitText = 'OK'): string
