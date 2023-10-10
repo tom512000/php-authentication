@@ -8,7 +8,6 @@ use Authentication\Exception\AuthenticationException;
 use Authentication\Exception\NotLoggedInException;
 use Entity\Exception\EntityNotFoundException;
 use Entity\User;
-use Html\Helper\Dumper;
 use Service\Exception\SessionException;
 use Service\Session;
 
@@ -19,14 +18,29 @@ class UserAuthentication
     private const SESSION_KEY = '__UserAuthentication__';
     private const SESSION_USER_KEY = 'user';
     private const LOGOUT_INPUT_NAME = 'logout';
+
     private ?User $user = null;
+
+    public function __construct()
+    {
+        try {
+            $utilisateur = $this->getUserFromSession();
+            $this->user = $utilisateur;
+        } catch (NotLoggedInException $exception) {
+        }
+    }
 
     /**
      * @throws NotLoggedInException
      */
-    public function __construct()
+    public function getUserFromSession(): User
     {
-        $this->user = $this->getUserFromSession();
+        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY])
+            && ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
+            return $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY];
+        } else {
+            throw new NotLoggedInException('Aucun utilisateur dans la session !');
+        }
     }
 
     public function loginForm(string $action, string $submitText = 'OK'): string
@@ -43,29 +57,22 @@ class UserAuthentication
         HTML;
     }
 
-    /**
-     * @throws AuthenticationException
-     * @throws EntityNotFoundException|SessionException
+    /** Récupére l'utilisateur dans la BD à partir des données du formulaire.
+     *
+     * @return User L'instance User de l'utilisateur s'il a été trouvé dans la BD
+     *
+     * @throws AuthenticationException Si l'utilisateur n'a pas été trouvé
      */
     public function getUserFromAuth(): User
     {
-        if (!User::findByCredentials($_POST['login'], $_POST['pass'])) {
+        try {
+            $utilisateur = User::findByCredentials($_POST['login'], $_POST['pass']);
+            $this->setUser($utilisateur);
+
+            return $utilisateur;
+        } catch (EntityNotFoundException) {
             throw new AuthenticationException("L'authentification est impossible !");
         }
-        $user = User::findByCredentials($_POST['login'], $_POST['pass']);
-        $this->setUser($user);
-
-        return $user;
-    }
-
-    /**
-     * @throws SessionException
-     */
-    protected function setUser(User $user): void
-    {
-        $this->user = $user;
-        Session::start();
-        $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] = $user;
     }
 
     /**
@@ -75,8 +82,8 @@ class UserAuthentication
     {
         Session::start();
         $res = false;
-        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]) &&
-            ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
+        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY])
+            && ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
             $res = true;
         }
 
@@ -96,36 +103,39 @@ class UserAuthentication
     }
 
     /**
-     * @throws SessionException
+     *
      */
     public function logoutIfRequested(): void
     {
-        Session::start();
-        if (isset($_POST[UserAuthentication::LOGOUT_INPUT_NAME])) {
-            unset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]);
-            unset($this->user);
+        try {
+            Session::start();
+            if (isset($_POST[UserAuthentication::LOGOUT_INPUT_NAME])) {
+                unset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]);
+                unset($this->user);
+            }
+        } catch (SessionException $e) {
         }
     }
 
     /**
      * @throws NotLoggedInException
      */
-    public function getUserFromSession(): User
-    {
-        if (isset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]) &&
-            ($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] instanceof User)) {
-            return $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY];
-        } else {
-            throw new NotLoggedInException("Aucun utilisateur dans la session !");
-        }
-    }
-
     public function getUser(): User
     {
-        if (isset($this->user)) {
-            return $this->user;
-        } else {
-            throw new NotLoggedInException("Aucun utilisateur dans la session !");
+        if (!isset($this->user)) {
+            throw new NotLoggedInException('Aucun utilisateur dans la session !');
         }
+
+        return $this->user;
+    }
+
+    /**
+     * @throws SessionException
+     */
+    protected function setUser(User $user): void
+    {
+        $this->user = $user;
+        Session::start();
+        $_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY] = $user;
     }
 }

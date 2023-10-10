@@ -16,8 +16,8 @@ try {
     // Si connexion réussie, affichage du profil
     $p->appendContent(
         <<<HTML
-<div>Bonjour {$user->getFirstName()}</div>
-HTML
+    <div>Bonjour {$user->getFirstName()}</div>
+    HTML
     );
 } catch (AuthenticationException $e) {
     // Récupération de l'exception si connexion échouée
