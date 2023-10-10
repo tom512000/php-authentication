@@ -11,13 +11,19 @@ $authentication = new UserAuthentication();
 
 $p = new AppWebPage('Authentification');
 
-try {
-    $user = $authentication->getUser();
-    $profile = new UserProfile($user);
-    $p->appendContent($profile->toHtml());
-} catch (NotLoggedInException) {
+if (!$authentication->isUserConnected()) {
     header("Location: ./form.php");
-    exit; // Fin du programme
+    exit;
 }
+
+$title = 'Zone membre utilisateur';
+$p = new AppWebPage($title);
+
+$p->appendContent(
+    <<<HTML
+        <h1>$title</h1>
+        <h2>{$authentication->getUser()->getFirstName()}</h2>
+HTML
+);
 
 echo $p->toHTML();
