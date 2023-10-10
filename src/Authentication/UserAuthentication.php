@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Authentication;
 
-use Authentication\Exception\AuthenticationException;
 use Authentication\Exception\NotLoggedInException;
 use Entity\Exception\EntityNotFoundException;
 use Entity\User;
@@ -26,7 +25,7 @@ class UserAuthentication
         try {
             $utilisateur = $this->getUserFromSession();
             $this->user = $utilisateur;
-        } catch (NotLoggedInException $exception) {
+        } catch (NotLoggedInException) {
         }
     }
 
@@ -57,11 +56,11 @@ class UserAuthentication
         HTML;
     }
 
-    /** Récupére l'utilisateur dans la BD à partir des données du formulaire.
+    /**
+     * Récupére l'utilisateur dans la BD à partir des données du formulaire.
      *
      * @return User L'instance User de l'utilisateur s'il a été trouvé dans la BD
-     *
-     * @throws AuthenticationException Si l'utilisateur n'a pas été trouvé
+     * @throws SessionException
      */
     public function getUserFromAuth(): User
     {
@@ -71,7 +70,6 @@ class UserAuthentication
 
             return $utilisateur;
         } catch (EntityNotFoundException) {
-            throw new AuthenticationException("L'authentification est impossible !");
         }
     }
 
@@ -102,9 +100,6 @@ class UserAuthentication
         HTML;
     }
 
-    /**
-     *
-     */
     public function logoutIfRequested(): void
     {
         try {
@@ -113,7 +108,7 @@ class UserAuthentication
                 unset($_SESSION[UserAuthentication::SESSION_KEY][UserAuthentication::SESSION_USER_KEY]);
                 unset($this->user);
             }
-        } catch (SessionException $e) {
+        } catch (SessionException) {
         }
     }
 

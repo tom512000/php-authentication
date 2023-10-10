@@ -22,7 +22,7 @@ CSS
 );
 
 $authentication->logoutIfRequested();
-
+/*
 try {
     $utilisateur = $authentication->getUser();
     $profil_utilisateur = new UserProfile($utilisateur);
@@ -43,43 +43,23 @@ HTML
         <p>Pour faire un test : essai/toto</p>
 HTML
     );
+}*/
+
+if ($authentication->isUserConnected()) {
+    $form = $authentication->logoutForm('form.php', 'Déconnexion');
+    $p->appendContent(
+        <<<HTML
+        {$form}
+HTML
+    );
+} else {
+    $form = $authentication->loginForm('auth.php');
+    $p->appendContent(
+        <<<HTML
+        {$form}
+        <p>Pour faire un test : essai/toto</p>
+HTML
+    );
 }
-
-/*
-if ($authentication->getUserFromSession()) {
-    // Formulaire de déconnexion
-    $form = $authentication->logoutForm('form.php', 'Déconnexion');
-    $p->appendContent(
-        <<<HTML
-        {$form}
-HTML
-    );
-} else {
-    // Formulaire de connexion
-    $form = $authentication->loginForm('auth.php');
-    $p->appendContent(
-        <<<HTML
-        {$form}
-        <p>Pour faire un test : essai/toto</p>
-HTML
-    );
-}*/
-
-/*if ($authentication->isUserConnected()) {
-    $form = $authentication->logoutForm('form.php', 'Déconnexion');
-    $p->appendContent(
-        <<<HTML
-        {$form}
-HTML
-    );
-} else {
-    $form = $authentication->loginForm('auth.php');
-    $p->appendContent(
-        <<<HTML
-        {$form}
-        <p>Pour faire un test : essai/toto</p>
-HTML
-    );
-}*/
 
 echo $p->toHTML();
