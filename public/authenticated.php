@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Authentication\Exception\AuthenticationException;
 use Authentication\UserAuthentication;
 use Html\AppWebPage;
 use Html\UserProfile;

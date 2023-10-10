@@ -8,21 +8,33 @@ use Entity\User;
 
 class UserProfile
 {
-    /** @var User Utilisateur */
+    // Attribut permettant de stocker une instance de User.
     private User $user;
 
     use StringEscaper;
 
+    /**
+     * Constructeur de la classe UserProfile.
+     * Récupère et affecte l'utilisateur (User) de la session à $user.
+     */
     public function __construct(User $user)
     {
         $this->user = $user;
     }
 
+    /**
+     * Retourne l'instance de User stockée dans l'attribut $user.
+     * 
+     * @return User Utilisateur stocké dans l'attribut $user.
+     */
     public function getUser() : User
     {
         return $this->user;
     }
 
+    /**
+     * Retourne les informations de l'utilisateur en HTML.
+     */
     public function toHtml() : string
     {
         return <<<HTML
