@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Authentication\Exception\NotLoggedInException;
 use Authentication\UserAuthentication;
 use Html\AppWebPage;
-use Html\UserProfile;
+use Html\UserProfileWithAvatar;
 
 $authentication = new UserAuthentication();
 
@@ -13,7 +13,7 @@ $p = new AppWebPage('Authentification');
 
 try {
     $user = $authentication->getUser();
-    $profile = new UserProfile($user);
+    $profile = new UserProfileWithAvatar($user);
     $p->appendContent($profile->toHtml());
 } catch (NotLoggedInException) {
     header("Location: ./form.php");
