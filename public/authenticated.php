@@ -22,7 +22,7 @@ $p = new AppWebPage($title);
 $p->appendContent(
     <<<HTML
         <h1>$title</h1>
-        <h2>{$authentication->getUser()->getFirstName()}</h2>
+        <h2><a href="user.php">{$authentication->getUser()->getFirstName()}</a></h2>
 HTML
 );
 

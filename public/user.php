@@ -12,7 +12,7 @@ $authentication = new UserAuthentication();
 $p = new AppWebPage('Authentification');
 
 try {
-    $user = $authentication->getUserFromAuth();
+    $user = $authentication->getUser();
     $profile = new UserProfile($user);
     $p->appendContent($profile->toHtml());
 } catch (NotLoggedInException) {
