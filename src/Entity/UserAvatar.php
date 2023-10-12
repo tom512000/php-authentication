@@ -16,8 +16,6 @@ class UserAvatar
 
     /**
      * Retourne l'attribut id de l'instance de UserAvatar.
-     *
-     * @return int
      */
     public function getId(): int
     {

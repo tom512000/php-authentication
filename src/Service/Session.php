@@ -10,7 +10,7 @@ class Session
 {
     /**
      * Démarre la session.
-     * 
+     *
      * @throws SessionException
      */
     public static function start()

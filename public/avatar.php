@@ -6,7 +6,7 @@ use Entity\Exception\EntityNotFoundException;
 use Entity\UserAvatar;
 
 try {
-    $userId = (int)$_GET['userId'];
+    $userId = (int) $_GET['userId'];
     $userAvatar = UserAvatar::findById($userId);
     $avatar = $userAvatar->getAvatar();
 } catch (EntityNotFoundException) {

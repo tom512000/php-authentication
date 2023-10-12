@@ -14,6 +14,7 @@ $p = new AppWebPage('Authentification');
 try {
     $user = $authentication->getUser();
     $profile = new UserProfileWithAvatar($user, $_SERVER['PHP_SELF']);
+    $profile->updateAvatar();
     $p->appendContent($profile->toHtml());
 } catch (NotLoggedInException) {
     header('Location: ./form.php');
