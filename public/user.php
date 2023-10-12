@@ -13,10 +13,10 @@ $p = new AppWebPage('Authentification');
 
 try {
     $user = $authentication->getUser();
-    $profile = new UserProfileWithAvatar($user);
+    $profile = new UserProfileWithAvatar($user, $_SERVER['PHP_SELF']);
     $p->appendContent($profile->toHtml());
 } catch (NotLoggedInException) {
-    header("Location: ./form.php");
+    header('Location: ./form.php');
     exit;
 }
 
